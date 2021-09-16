@@ -1,91 +1,115 @@
 # A gentle introduction to Terraform in OCI
 
-## lab1: set the compartment_id and collect some data
-This lab introduce variables and data structures.
+## lab2: create a VCN
+We have seen how to query a data source, now let's create our first resource: the Virtual Cloud Network (VCN).
 
-Terraform is meant to create resources in the Cloud, but it can also inspect the existing resources.
-In this lab, we will use a data source (`data`) to get information about the compartment we want to work with.
-
-
-### Switch to the lab1 branch:
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab1
 
 ### New in this lab:
-The file data.tf contains a basic data source to gather information about the compartment:
+The file `network.tf` contains a new resource for the VCN:
 ```
-data "oci_identity_compartment" "my_compartment" {
-    id = var.compartment_id
-    }
-```
-Data sources gather information about the environment, useful to create/maintain resources. This is somehow equivalent to gathering `facts` in other automation frameworks like `puppet` and `ansible`.
-
-
-### Try to execute Terraform plan
-
-
-## Get your compartment OCID
-Access the Cloud Console, navigate to "Identity -> Compartment".
-
-Create a Compartment from the console if you don't have one already, then select the compartment you want to work with and copy its OCID.
-
-
-
-## Run validate, plan, apply
-
-`terraform init` will download the required plugins:
-```
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform init
-
-Initializing the backend...
-
-Initializing provider plugins...
-- Finding latest version of hashicorp/oci...
-- Installing hashicorp/oci v4.42.0...
-- Installed hashicorp/oci v4.42.0 (unauthenticated)
-
-Terraform has created a lock file .terraform.lock.hcl to record the provider
-selections it made above. Include this file in your version control repository
-so that Terraform can guarantee to make the same selections by default when
-you run "terraform init" in the future.
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
+# -----------------------------------------------
+# Setup the VCN.
+# -----------------------------------------------
+resource "oci_core_vcn" "demovcn" {
+  cidr_block     = var.vcn_cidr
+  dns_label      = "demovcn"
+  compartment_id = var.compartment_id
+  display_name   = "demo-vcn"
+}
 ```
 
-`terraform validate` performs a check of your Terraform file syntax:
+The new variable `vcn_cidr` has been added to `variables.tf`:
 ```
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform validate
-Success! The configuration is valid.
+variable "vcn_cidr" {
+  description = "CIDR block for the VCN. Security rules are created after this."
+  default = "10.0.0.0/16"
+}
 ```
 
-`terraform plan` shows you what will be applied/modified if you run `terraform apply`:
+### Plan and apply the stack
 ```
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform validate
-Success! The configuration is valid.
-
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform plan
 
-No changes. Your infrastructure matches the configuration.
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
 
-Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed.
+Terraform will perform the following actions:
+
+  # oci_core_vcn.demovcn will be created
+  + resource "oci_core_vcn" "demovcn" {
+      + cidr_block               = "10.0.0.0/16"
+      + cidr_blocks              = (known after apply)
+      + compartment_id           = "ocid1.compartment.oc1..aaaaaaaa7d5txgtjrxbasote6czdn6vwpt2gn5tqhkbpyytqdmorr2jed6pa"
+      + default_dhcp_options_id  = (known after apply)
+      + default_route_table_id   = (known after apply)
+      + default_security_list_id = (known after apply)
+      + defined_tags             = (known after apply)
+      + display_name             = "demo-vcn"
+      + dns_label                = "demovcn"
+      + freeform_tags            = (known after apply)
+      + id                       = (known after apply)
+      + ipv6cidr_blocks          = (known after apply)
+      + is_ipv6enabled           = (known after apply)
+      + state                    = (known after apply)
+      + time_created             = (known after apply)
+      + vcn_domain_name          = (known after apply)
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you run "terraform apply" now.
 ```
 
-Finally, `terraform apply` apply the changes. But for this first lab, we have no changes, this is just to ensure that everything is in place for that.
+As the apply changes the infrastructure, you have to confirm the modification by entering `yes`:
 ```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform apply
 
-No changes. Your infrastructure matches the configuration.
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
 
-Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed.
+Terraform will perform the following actions:
 
-Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+  # oci_core_vcn.demovcn will be created
+  + resource "oci_core_vcn" "demovcn" {
+      + cidr_block               = "10.0.0.0/16"
+      + cidr_blocks              = (known after apply)
+      + compartment_id           = "ocid1.compartment.oc1..aaaaaaaa7d5txgtjrxbasote6czdn6vwpt2gn5tqhkbpyytqdmorr2jed6pa"
+      + default_dhcp_options_id  = (known after apply)
+      + default_route_table_id   = (known after apply)
+      + default_security_list_id = (known after apply)
+      + defined_tags             = (known after apply)
+      + display_name             = "demo-vcn"
+      + dns_label                = "demovcn"
+      + freeform_tags            = (known after apply)
+      + id                       = (known after apply)
+      + ipv6cidr_blocks          = (known after apply)
+      + is_ipv6enabled           = (known after apply)
+      + state                    = (known after apply)
+      + time_created             = (known after apply)
+      + vcn_domain_name          = (known after apply)
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+oci_core_vcn.demovcn: Creating...
+oci_core_vcn.demovcn: Creation complete after 1s [id=ocid1.vcn.oc1.uk-london-1.amaaaaaaknuwtjiai6fi24b6daedzutlzfbyyw3w2dwhgzfun2imxxinsyka]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
 
+You can confirm with `terraform show` or with the console that the VCN has been created.
 
+
+
+### To continue, switch to the lab3 branch:
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab3
+Branch lab3 set up to track remote branch lab3 from origin.
+Switched to a new branch 'lab3'
