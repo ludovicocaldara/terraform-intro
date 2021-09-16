@@ -14,12 +14,10 @@ resource "random_password" "adb_password" {
 }
 
 resource "oci_database_autonomous_database" "demo_adb" {
-    #Required
-    compartment_id = var.compartment_id
-    db_name        = "demoadb"
-
-    #Optional
-    admin_password = random_password.adb_password.result
-    is_free_tier   = true
-    subnet_id      = oci_core_subnet.demo-public-subnet.id
+    compartment_id           = var.compartment_id
+    db_name                  = "demoadb"
+    is_free_tier             = false
+    cpu_core_count           = 1
+    data_storage_size_in_tbs = 1
+    admin_password           = random_password.adb_password.result
 }
