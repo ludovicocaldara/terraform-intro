@@ -59,4 +59,6 @@ ludovico_c@cloudshell:tmp (uk-london-1)$ git branch --list
 Checkout the first lab's branch, `lab0` and read its README, you can switch to that branch also within the github.com website, it will be easier to read. :-)
 ```
 ludovico_c@cloudshell:tmp (uk-london-1)$ git checkout lab0  
+Branch lab0 set up to track remote branch lab0 from origin.
+Switched to a new branch 'lab0'
 ```
