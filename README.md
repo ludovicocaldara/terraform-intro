@@ -11,7 +11,7 @@ In this lab, we will use a data source (`data`) to get information about the com
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab1
 
 ### New in this lab:
-The file data.tf contains a basic data source to gather information about the compartment:
+The file `data.tf` contains a basic data source to gather information about the compartment:
 ```
 data "oci_identity_compartment" "my_compartment" {
     id = var.compartment_id
@@ -19,6 +19,13 @@ data "oci_identity_compartment" "my_compartment" {
 ```
 Data sources gather information about the environment, useful to create/maintain resources. This is somehow equivalent to gathering `facts` in other automation frameworks like `puppet` and `ansible`.
 
+Because the data source requires an `id`, we will use a variable for that (we don't want to put our OCID in git, do we?), so we start keeping track of the variables, in this case we'll use a separate file for that. Please note that all the terraform configuration could be put in a single file, but it's better to keep them separated for readability.
+`variables.tf` contains the declaration of the variable:
+```
+variable "compartment_id" {
+  description = "The OCID of the compartment you want to work with."
+}
+```
 
 ### Try to execute Terraform plan
 
