@@ -27,64 +27,44 @@ variable "compartment_id" {
 }
 ```
 
-### Try to execute Terraform plan
+### Try to execute terraform validate and plan
+```
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform validate
+Success! The configuration is valid.
+```
 
+The validation of the code is OK, but the plan asks for a variable:
+```
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform plan
+var.compartment_id
+  The OCID of the compartment you want to work with.
 
-## Get your compartment OCID
+  Enter a value: 
+```
+You can hit `^C` and stop the execution at this point.
+We could copy&paste the OCID here, but we would have to repeat this for every execution. So there are two neater solutions:
+1. Use an `override.tf` file that contains our values. This `override.tf` is ignored by `.gitignore`, so that it won't be stored in the `git` repository.
+2. Use an environment variable. When Terraform looks for a variable value and cannot find it, it looks for an environment variables named `TF_VAR_name`.
+
+Both methods are valid. For simplicity, we'll just use the second.
+
 Access the Cloud Console, navigate to "Identity -> Compartment".
-
 Create a Compartment from the console if you don't have one already, then select the compartment you want to work with and copy its OCID.
 
-
-
-## Run validate, plan, apply
-
-`terraform init` will download the required plugins:
 ```
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform init
-
-Initializing the backend...
-
-Initializing provider plugins...
-- Finding latest version of hashicorp/oci...
-- Installing hashicorp/oci v4.42.0...
-- Installed hashicorp/oci v4.42.0 (unauthenticated)
-
-Terraform has created a lock file .terraform.lock.hcl to record the provider
-selections it made above. Include this file in your version control repository
-so that Terraform can guarantee to make the same selections by default when
-you run "terraform init" in the future.
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ echo "export TF_VAR_compartment_id=<YOUR_COMPARTMENT_OCID>" >> ~/.bashrc
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ . ~/.bashrc
 ```
 
-`terraform validate` performs a check of your Terraform file syntax:
+The next execution of `terraform plan` will succeed:
 ```
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform validate
-Success! The configuration is valid.
-```
-
-`terraform plan` shows you what will be applied/modified if you run `terraform apply`:
-```
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform validate
-Success! The configuration is valid.
-
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform plan
 
 No changes. Your infrastructure matches the configuration.
 
 Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed.
 ```
-
-Finally, `terraform apply` apply the changes. But for this first lab, we have no changes, this is just to ensure that everything is in place for that.
+Now the apply:
 ```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform apply
 
@@ -95,4 +75,23 @@ Terraform has compared your real infrastructure against your configuration and f
 Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
 ```
 
-
+### Get the data source information
+Use `terraform show` for this.
+```
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform show
+# data.oci_identity_compartment.my_compartment:
+data "oci_identity_compartment" "my_compartment" {
+    compartment_id = "ocid1.compartment.oc1..aaaaaaaasrhvy32rogjwlnf77vwwb7hetdt7vng7lt7cr3cat26h7ffovuoa"
+    defined_tags   = {
+        "Administration.Creator" = "ludovico.caldara@oracle.com"
+    }
+    description    = "Terraform demo for SPOUG"
+    freeform_tags  = {}
+    id             = "ocid1.compartment.oc1..aaaaaaaa7d5txgtjrxbasote6czdn6vwpt2gn5tqhkbpyytqdmorr2jed6pa"
+    is_accessible  = true
+    name           = "terraform-demo"
+    state          = "ACTIVE"
+    time_created   = "2021-09-14 10:09:05.245 +0000 UTC"
+}
+```
+The status of the resources and data sources is stored in the file `terraform.tfstate`.
