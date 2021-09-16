@@ -2,11 +2,35 @@
 
 ## lab4: create an Autonomous Database
 
-
-
 ### New in this lab:
 
+The file `database.tf` contains a resource to create a new random password, and then the resource declaration for the Autonomous Database.
 
+Please note that `is_free_tier` could be set at `true` if you still have Always Free Autonomous Database resources available.
+```
+resource "random_password" "adb_password" {
+  length           = 20
+  special          = true
+  number           = true
+  upper            = true
+  lower            = true
+  override_special = "_%@+!"
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
+  min_upper        = 2
+}
+
+resource "oci_database_autonomous_database" "demo_adb" {
+    compartment_id           = var.compartment_id
+    db_name                  = "demoadb"
+    is_free_tier             = false
+    cpu_core_count           = 1
+    data_storage_size_in_tbs = 1
+    admin_password           = random_password.adb_password.result
+}
+
+```
 
 ### Run the updated stack
 
@@ -293,6 +317,30 @@ oci_database_autonomous_database.demo_adb: Creation complete after 49s [id=ocid1
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
+
+The password has been created with the `random_password` resource. It is masked by default when printed.
+To get the actual password, you can use the `nonsensitive` function in `terraform console`:
+```
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform console
+> nonsensitive(random_password.adb_password.result)
+"3o1LIggOoU7y%KQVhm1%"
+```
+
+Similarly, you can get the connection URLs for the Autonomous Database:
+```
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform console
+> oci_database_autonomous_database.demo_adb.connection_urls
+tolist([
+  {
+    "apex_url" = "https://DN2THOBKLNJOUFS-DEMOADB.adb.uk-london-1.oraclecloudapps.com/ords/apex"
+    "graph_studio_url" = "https://DN2THOBKLNJOUFS-DEMOADB.adb.uk-london-1.oraclecloudapps.com/graphstudio/"
+    "machine_learning_user_management_url" = "https://DN2THOBKLNJOUFS-DEMOADB.adb.uk-london-1.oraclecloudapps.com/omlusers/"
+    "sql_dev_web_url" = "https://DN2THOBKLNJOUFS-DEMOADB.adb.uk-london-1.oraclecloudapps.com/ords/sql-developer"
+  },
+])
+```
+
+You can connect using for instance the `sql_dev_web_url`, user `admin` and the password discovered earlier to access the new database.
 
 ### To continue, switch to the lab5 branch:
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab5
