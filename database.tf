@@ -3,7 +3,7 @@
 resource "random_password" "adb_password" {
   length           = 20
   special          = true
-  numeric          = true
+  number           = true
   upper            = true
   lower            = true
   override_special = "_%@+!"
