@@ -1,21 +1,36 @@
 # A gentle introduction to Terraform in OCI
 
-## lab0: setup the empty OCI provider
-This lab is just to show you how to run a basic `terraform` command.
+## lab1: set the compartment_id and collect some data
+This lab introduce variables and data structures.
+
+Terraform is meant to create resources in the Cloud, but it can also inspect the existing resources.
+In this lab, we will use a data source (`data`) to get information about the compartment we want to work with.
 
 
-### New in this Lab
-The file `provider.tf` contains a basic provider entry:
+### Switch to the lab1 branch:
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab1
+
+### New in this lab:
+The file data.tf contains a basic data source to gather information about the compartment:
 ```
-# -------------------------
-# Setup the OCI provider...
-# -------------------------
-provider "oci" {
-}
+data "oci_identity_compartment" "my_compartment" {
+    id = var.compartment_id
+    }
 ```
+Data sources gather information about the environment, useful to create/maintain resources. This is somehow equivalent to gathering `facts` in other automation frameworks like `puppet` and `ansible`.
 
 
-## Run the full terraform cycle: init, validate, plan, apply
+### Try to execute Terraform plan
+
+
+## Get your compartment OCID
+Access the Cloud Console, navigate to "Identity -> Compartment".
+
+Create a Compartment from the console if you don't have one already, then select the compartment you want to work with and copy its OCID.
+
+
+
+## Run validate, plan, apply
 
 `terraform init` will download the required plugins:
 ```
