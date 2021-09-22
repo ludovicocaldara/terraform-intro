@@ -1,7 +1,7 @@
 # A gentle introduction to Terraform in OCI
 
 This repository is a small tutorial to get you up to speed with Terraform and Oracle Cloud Infrastructure.
-Terraform is an tool to manage your Cloud Infrastructure as Code.
+Terraform is a tool to manage your Cloud Infrastructure as Code.
 To setup this tutorial, you need an OCI tenancy with some credits (either Free Trial or other).
 __Please understand that spinning up resources in the Cloud with Terraform will cost you real money! Unless you use Always Free resources or you have Free Trial__
 
