@@ -1,8 +1,6 @@
 # A gentle introduction to Terraform in OCI
 
-## lab4: create an Autonomous Database
-
-
+## lab5: create a Compute Instance
 
 ### New in this lab:
 
@@ -84,176 +82,213 @@ Here, notice that `ssh_public_key` does not have a default value. We'll need to 
 
 ### Run the updated stack
 
-The `terraform` validate will fail this time because we are using a new resource plugin (random).
+The validate should succeed:
 ```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform validate
+Success! The configuration is valid.
+```
+
+But the plan, as we have seen in previous labs, asks for the value of the `ssh_public_key` variable:
+```
+var.ssh_public_key
+  public ssh key to connect to the compute instance
+
+  Enter a value: ^C
+Interrupt received.
+Please wait for Terraform to exit or data loss may occur.
+Gracefully shutting down...
+
+
 ╷
-│ Error: Could not load plugin
+│ Error: No value for required variable
 │ 
+│   on variables.tf line 25:
+│   25: variable "ssh_public_key" {
 │ 
-│ Plugin reinitialization required. Please run "terraform init".
-│ 
-│ Plugins are external binaries that Terraform uses to access and manipulate
-│ resources. The configuration provided requires plugins which can't be located,
-│ don't satisfy the version constraints, or are otherwise incompatible.
-│ 
-│ Terraform automatically discovers provider requirements from your
-│ configuration, including providers used in child modules. To see the
-│ requirements and constraints, run "terraform providers".
-│ 
-│ failed to instantiate provider "registry.terraform.io/hashicorp/random" to obtain schema: unknown provider "registry.terraform.io/hashicorp/random"
-│ 
+│ The root module input variable "ssh_public_key" is not set, and has no default value. Use a -var or -var-file command line argument to provide a value for this
+│ variable.
 ╵
 ```
 
-We have to run `terraform init` again:
+Let's create a key pair in our cloud shell and put the public key in our .barhrc:
 ```
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform init
-
-Initializing the backend...
-
-Initializing provider plugins...
-- Finding latest version of hashicorp/random...
-- Reusing previous version of hashicorp/oci from the dependency lock file
-- Installing hashicorp/random v3.1.0...
-- Installed hashicorp/random v3.1.0 (signed by HashiCorp)
-- Using previously-installed hashicorp/oci v4.42.0
-
-Terraform has made some changes to the provider dependency selections recorded
-in the .terraform.lock.hcl file. Review those changes and commit them to your
-version control system if they represent changes you intended to make.
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
+ludovico_c@cloudshell:~ (uk-london-1)$ ssh-keygen 
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ludovico_c/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/ludovico_c/.ssh/id_rsa.
+Your public key has been saved in /home/ludovico_c/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:+Dx4dphdeqYMxhJT9vZ0eX1sbZx5iT6RXDJOa2jOESY ludovico_c@508bf4fdd566
+The key's randomart image is:
++---[RSA 2048]----+
+|                 |
+|                 |
+|        oE o + . |
+|       + .o * B+*|
+|      + S o+oOo+@|
+|       B =+=+..+o|
+|      o % +o+o   |
+|       = = +  .  |
+|          o      |
++----[SHA256]-----+
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ echo 'export TF_VAR_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)' >> ~/.bashrc
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ . ~/.bashrc
 ```
-
-And then the validate will succeed:
+The variable `TF_VAR_ssh_public_key` should be set and the plan should succeed:
 ```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform plan
+random_password.adb_password: Refreshing state... [id=none]
 oci_core_vcn.demovcn: Refreshing state... [id=ocid1.vcn.oc1.uk-london-1.amaaaaaaknuwtjiai6fi24b6daedzutlzfbyyw3w2dwhgzfun2imxxinsyka]
+oci_database_autonomous_database.demo_adb: Refreshing state... [id=ocid1.autonomousdatabase.oc1.uk-london-1.anwgiljtknuwtjiayr6glo3extd2atgvptop4qpzqdlpwn7krkcjhd5yzqja]
 oci_core_network_security_group.demo-network-security-group: Refreshing state... [id=ocid1.networksecuritygroup.oc1.uk-london-1.aaaaaaaajsf5fcjpjltt6bk6227l5mnpdqzkbf4ehf2ndwv432r2e556pqaq]
 oci_core_internet_gateway.demo-internet-gateway: Refreshing state... [id=ocid1.internetgateway.oc1.uk-london-1.aaaaaaaaysidzuvfcpr74sixajjpofogs2lnvtnzsjfbx6yxokzr6ugp5byq]
 oci_core_security_list.demo-security-list: Refreshing state... [id=ocid1.securitylist.oc1.uk-london-1.aaaaaaaa25fzqeohhsix26bi44kpexn7cgdjchbhsftzow5nqv4ogzqd3dvq]
 oci_core_route_table.demo-public-rt: Refreshing state... [id=ocid1.routetable.oc1.uk-london-1.aaaaaaaa2a5dacz323c6wuw7liogm4hcllsb7tkccqbs7ldsoirz4gi5mkca]
 oci_core_subnet.demo-public-subnet: Refreshing state... [id=ocid1.subnet.oc1.uk-london-1.aaaaaaaae7rjnngehlnllrt4665b2logspezs2d6ubxy3bzdqvnj5xggutma]
 
+Note: Objects have changed outside of Terraform
+
+Terraform detected the following changes made outside of Terraform since the last "terraform apply":
+
+  # oci_database_autonomous_database.demo_adb has been changed
+  ~ resource "oci_database_autonomous_database" "demo_adb" {
+      ~ apex_details                         = [
+          ~ {
+              ~ ords_version = "21.2.3.217.1009" -> "21.2.4.243.1032"
+                # (1 unchanged element hidden)
+            },
+        ]
+        id                                   = "ocid1.autonomousdatabase.oc1.uk-london-1.anwgiljtknuwtjiayr6glo3extd2atgvptop4qpzqdlpwn7krkcjhd5yzqja"
+      ~ time_maintenance_begin               = "2021-09-18 14:00:00 +0000 UTC" -> "2021-09-25 14:00:00 +0000 UTC"
+      ~ time_maintenance_end                 = "2021-09-18 16:00:00 +0000 UTC" -> "2021-09-25 16:00:00 +0000 UTC"
+      + used_data_storage_size_in_tbs        = 1
+      + whitelisted_ips                      = []
+        # (38 unchanged attributes hidden)
+    }
+
+Unless you have made equivalent changes to your configuration, or ignored the relevant attributes using ignore_changes, the following plan may include actions to undo or
+respond to these changes.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
   + create
 
 Terraform will perform the following actions:
 
-  # oci_database_autonomous_database.demo_adb will be created
-  + resource "oci_database_autonomous_database" "demo_adb" {
-      + admin_password                                 = (sensitive value)
-      + apex_details                                   = (known after apply)
-      + are_primary_whitelisted_ips_used               = (known after apply)
-      + autonomous_container_database_id               = (known after apply)
-      + autonomous_database_backup_id                  = (known after apply)
-      + autonomous_database_id                         = (known after apply)
-      + autonomous_maintenance_schedule_type           = (known after apply)
-      + available_upgrade_versions                     = (known after apply)
-      + backup_config                                  = (known after apply)
-      + clone_type                                     = (known after apply)
-      + compartment_id                                 = "ocid1.compartment.oc1..aaaaaaaa7d5txgtjrxbasote6czdn6vwpt2gn5tqhkbpyytqdmorr2jed6pa"
-      + connection_strings                             = (known after apply)
-      + connection_urls                                = (known after apply)
-      + cpu_core_count                                 = (known after apply)
-      + data_safe_status                               = (known after apply)
-      + data_storage_size_in_gb                        = (known after apply)
-      + data_storage_size_in_tbs                       = (known after apply)
-      + db_name                                        = "demo_adb"
-      + db_version                                     = (known after apply)
-      + db_workload                                    = (known after apply)
-      + defined_tags                                   = (known after apply)
-      + display_name                                   = (known after apply)
-      + failed_data_recovery_in_seconds                = (known after apply)
-      + freeform_tags                                  = (known after apply)
-      + id                                             = (known after apply)
-      + infrastructure_type                            = (known after apply)
-      + is_access_control_enabled                      = (known after apply)
-      + is_auto_scaling_enabled                        = (known after apply)
-      + is_data_guard_enabled                          = (known after apply)
-      + is_dedicated                                   = (known after apply)
-      + is_free_tier                                   = true
-      + is_preview                                     = (known after apply)
-      + is_preview_version_with_service_terms_accepted = (known after apply)
-      + is_refreshable_clone                           = (known after apply)
-      + key_history_entry                              = (known after apply)
-      + key_store_id                                   = (known after apply)
-      + key_store_wallet_name                          = (known after apply)
-      + kms_key_id                                     = (known after apply)
-      + kms_key_lifecycle_details                      = (known after apply)
-      + license_model                                  = (known after apply)
-      + lifecycle_details                              = (known after apply)
-      + nsg_ids                                        = (known after apply)
-      + ocpu_count                                     = (known after apply)
-      + open_mode                                      = (known after apply)
-      + operations_insights_status                     = (known after apply)
-      + permission_level                               = (known after apply)
-      + private_endpoint                               = (known after apply)
-      + private_endpoint_ip                            = (known after apply)
-      + private_endpoint_label                         = (known after apply)
-      + refreshable_mode                               = (known after apply)
-      + refreshable_status                             = (known after apply)
-      + role                                           = (known after apply)
-      + service_console_url                            = (known after apply)
-      + source                                         = (known after apply)
-      + source_id                                      = (known after apply)
-      + standby_db                                     = (known after apply)
-      + standby_whitelisted_ips                        = (known after apply)
-      + state                                          = (known after apply)
-      + subnet_id                                      = "ocid1.subnet.oc1.uk-london-1.aaaaaaaae7rjnngehlnllrt4665b2logspezs2d6ubxy3bzdqvnj5xggutma"
-      + system_tags                                    = (known after apply)
-      + time_created                                   = (known after apply)
-      + time_deletion_of_free_autonomous_database      = (known after apply)
-      + time_maintenance_begin                         = (known after apply)
-      + time_maintenance_end                           = (known after apply)
-      + time_of_last_failover                          = (known after apply)
-      + time_of_last_refresh                           = (known after apply)
-      + time_of_last_refresh_point                     = (known after apply)
-      + time_of_last_switchover                        = (known after apply)
-      + time_of_next_refresh                           = (known after apply)
-      + time_reclamation_of_free_autonomous_database   = (known after apply)
-      + timestamp                                      = (known after apply)
-      + used_data_storage_size_in_tbs                  = (known after apply)
-      + vault_id                                       = (known after apply)
+  # oci_core_instance.demo_vm will be created
+  + resource "oci_core_instance" "demo_vm" {
+      + availability_domain                 = "ocid1.availabilitydomain.oc1..aaaaaaaaw2i3i53quioaywmhx56ss5plwk7bmmeg2266lo7inilhbizeroua"
+      + boot_volume_id                      = (known after apply)
+      + capacity_reservation_id             = (known after apply)
+      + compartment_id                      = "ocid1.compartment.oc1..aaaaaaaa7d5txgtjrxbasote6czdn6vwpt2gn5tqhkbpyytqdmorr2jed6pa"
+      + dedicated_vm_host_id                = (known after apply)
+      + defined_tags                        = (known after apply)
+      + display_name                        = "demo-vm"
+      + fault_domain                        = (known after apply)
+      + freeform_tags                       = (known after apply)
+      + hostname_label                      = (known after apply)
+      + id                                  = (known after apply)
+      + image                               = (known after apply)
+      + ipxe_script                         = (known after apply)
+      + is_pv_encryption_in_transit_enabled = (known after apply)
+      + launch_mode                         = (known after apply)
+      + metadata                            = {
+          + "ssh_authorized_keys" = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDP3tr6pr7lu2O/gIEzJDb4sHZZqo2HqzYJYLgozmoR/jxBGtz5hWbrT72edNNIezOKy78uv83+5WNmudQPZdbRyBNPP7B/B0faMk0M/fo5tZB/4nCE102jhM5XSzK4JLc+PIfKp5idPJGKRvad/v3AXKFDSei6hW26h/Qml9xDKCqoi9ICM1L0q5hL77Rp6CLB5ephSdBqCUZQwj2ClaKuNMWSE8FIS1w+X9+vTDs1iBP7mFej6jaf1MKw74OQhXPdnPZaNOMKygA0m5rnxEFvLEnzltTdm5n7XMe2vYBlsbkRaNtUsmMqIeiV38CBbKdRM2YXClwHsI62ekHg8VZj ludovico_c@508bf4fdd566"
+        }
+      + private_ip                          = (known after apply)
+      + public_ip                           = (known after apply)
+      + region                              = (known after apply)
+      + shape                               = "VM.Standard2.2"
+      + state                               = (known after apply)
+      + subnet_id                           = (known after apply)
+      + system_tags                         = (known after apply)
+      + time_created                        = (known after apply)
+      + time_maintenance_reboot_due         = (known after apply)
 
-      + customer_contacts {
-          + email = (known after apply)
+      + agent_config {
+          + are_all_plugins_disabled = (known after apply)
+          + is_management_disabled   = (known after apply)
+          + is_monitoring_disabled   = (known after apply)
+
+          + plugins_config {
+              + desired_state = (known after apply)
+              + name          = (known after apply)
+            }
+        }
+
+      + availability_config {
+          + is_live_migration_preferred = (known after apply)
+          + recovery_action             = (known after apply)
+        }
+
+      + create_vnic_details {
+          + assign_public_ip       = "false"
+          + defined_tags           = (known after apply)
+          + display_name           = "demo-vm-vnic"
+          + freeform_tags          = (known after apply)
+          + hostname_label         = "demo-vm"
+          + private_ip             = (known after apply)
+          + skip_source_dest_check = (known after apply)
+          + subnet_id              = "ocid1.subnet.oc1.uk-london-1.aaaaaaaae7rjnngehlnllrt4665b2logspezs2d6ubxy3bzdqvnj5xggutma"
+          + vlan_id                = (known after apply)
+        }
+
+      + instance_options {
+          + are_legacy_imds_endpoints_disabled = (known after apply)
+        }
+
+      + launch_options {
+          + boot_volume_type                    = (known after apply)
+          + firmware                            = (known after apply)
+          + is_consistent_volume_naming_enabled = (known after apply)
+          + is_pv_encryption_in_transit_enabled = (known after apply)
+          + network_type                        = (known after apply)
+          + remote_data_volume_type             = (known after apply)
+        }
+
+      + platform_config {
+          + numa_nodes_per_socket = (known after apply)
+          + type                  = (known after apply)
+        }
+
+      + preemptible_instance_config {
+          + preemption_action {
+              + preserve_boot_volume = (known after apply)
+              + type                 = (known after apply)
+            }
+        }
+
+      + shape_config {
+          + baseline_ocpu_utilization     = (known after apply)
+          + gpu_description               = (known after apply)
+          + gpus                          = (known after apply)
+          + local_disk_description        = (known after apply)
+          + local_disks                   = (known after apply)
+          + local_disks_total_size_in_gbs = (known after apply)
+          + max_vnic_attachments          = (known after apply)
+          + memory_in_gbs                 = (known after apply)
+          + networking_bandwidth_in_gbps  = (known after apply)
+          + ocpus                         = (known after apply)
+          + processor_description         = (known after apply)
+        }
+
+      + source_details {
+          + boot_volume_size_in_gbs = "128"
+          + kms_key_id              = (known after apply)
+          + source_id               = "ocid1.image.oc1.uk-london-1.aaaaaaaanpmhufh235fw3c54pxp7lgsqww6krdjpb46xg4y5f54osecrev2a"
+          + source_type             = "image"
         }
     }
 
-  # random_password.adb_password will be created
-  + resource "random_password" "adb_password" {
-      + id               = (known after apply)
-      + length           = 20
-      + lower            = true
-      + min_lower        = 2
-      + min_numeric      = 2
-      + min_special      = 2
-      + min_upper        = 2
-      + number           = true
-      + override_special = "_%@+!"
-      + result           = (sensitive value)
-      + special          = true
-      + upper            = true
-    }
+Plan: 1 to add, 0 to change, 0 to destroy.
 
-Plan: 2 to add, 0 to change, 0 to destroy.
-
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────��───────────────────────────────���──────────
 
 Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you run "terraform apply" now.
 ```
-
-
 
 ### To continue, switch to the lab5 branch:
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab5
