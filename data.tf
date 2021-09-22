@@ -14,3 +14,7 @@ data "oci_core_images" "vm_images" {
   sort_order                 = "DESC"
 }
 
+data "oci_core_image_shapes" "test_image_shapes" {
+  #Required
+  image_id = oci_core_images.vm_images.images[0].id
+}

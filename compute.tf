@@ -1,5 +1,5 @@
 resource "oci_core_instance" "demo_vm" {
-  availability_domain = data.oci_identity_availability_domains.availability_domains.availability_domains[0].id
+  availability_domain = data.oci_identity_availability_domains.availability_domains.availability_domains[0].name
   compartment_id      = var.compartment_id
   shape               = var.vm_shape
   display_name        = var.compute_name
