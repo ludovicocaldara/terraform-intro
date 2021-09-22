@@ -12,6 +12,7 @@ data "oci_core_images" "vm_images" {
   operating_system_version   = "8"
   sort_by                    = "TIMECREATED"
   sort_order                 = "DESC"
+  shape                      = var.vm_shape
 }
 
 data "oci_core_image_shapes" "test_image_shapes" {
