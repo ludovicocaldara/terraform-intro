@@ -1,5 +1,5 @@
 resource "oci_core_instance" "demo_vm" {
-  availability_domain = oci_identity_availability_domains.availability_domains[0].id {
+  availability_domain = data.oci_identity_availability_domains.availability_domains.availability_domains[0].id
   compartment_id      = var.compartment_id
   shape               = var.vm_shape
   display_name        = var.compute_name
@@ -13,8 +13,8 @@ resource "oci_core_instance" "demo_vm" {
   create_vnic_details {
     assign_public_ip        = false
     subnet_id               = oci_core_subnet.demo-public-subnet.id
-    display_name            = "${var.compute-name}-vnic"
-    hostname_label          = var.compute-name
+    display_name            = "${var.compute_name}-vnic"
+    hostname_label          = var.compute_name
   }
 
   metadata = {
