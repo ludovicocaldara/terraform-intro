@@ -6,6 +6,80 @@
 
 ### New in this lab:
 
+A new `oci_core_instance` resource in `compute.tf`:
+```
+resource "oci_core_instance" "demo_vm" {
+  availability_domain = oci_identity_availability_domains.availability_domains[0].id {
+  compartment_id      = var.compartment_id
+  shape               = var.vm_shape
+  display_name        = var.compute_name
+
+  source_details {
+    source_id               = data.oci_core_images.vm_images.images[0].id
+    source_type             = "image"
+    boot_volume_size_in_gbs = var.boot_volume_size_in_gbs
+  }
+
+  create_vnic_details {
+    assign_public_ip        = false
+    subnet_id               = oci_core_subnet.demo-public-subnet.id
+    display_name            = "${var.compute-name}-vnic"
+    hostname_label          = var.compute-name
+  }
+
+  metadata = {
+    ssh_authorized_keys = "${var.ssh_public_key}"
+  }
+
+}
+```
+
+Notice that some of the parameters come from new `data` blocks:
+```
+    [...]
+    availability_domain = oci_identity_availability_domains.availability_domains[0].id {
+    [...]
+      source_id               = data.oci_core_images.vm_images.images[0].id
+    [...]
+```
+Those are defined as new data sources in `data.tf`:
+```
+data "oci_identity_availability_domains" "availability_domains" {
+  compartment_id = var.compartment_id
+}
+
+data "oci_core_images" "vm_images" {
+  compartment_id             = var.compartment_id
+  operating_system           = "Oracle Linux"
+  operating_system_version   = "8"
+  sort_by                    = "TIMECREATED"
+  sort_order                 = "DESC"
+}
+```
+
+We use `availability_domains` to get the OCID of the first availability domain in the region (for simplicity we use always the first one and won't try to disperse instances on different domains).
+`vm_images` search for the latest OL8 image, the compute instance will use this one.
+
+
+There are also some new variables in `variables.tf`.
+```
+variable "vm_shape" {
+  description = "OCI Compute VM shape. Flex is the new default and it's pretty nice :-). Beware of your quotas, credits and limits if you plan to change it."
+  default = "VM.Standard2.2"
+}
+
+variable "compute_name" {
+  description = "display name for the compute instance"
+  default = "demo-vm"
+}
+
+variable "ssh_public_key" {
+  description = "public ssh key to connect to the compute instance"
+}
+```
+
+Here, notice that `ssh_public_key` does not have a default value. We'll need to take it as an external variable, as we don't want to save it in the git repository.
+
 
 
 ### Run the updated stack
