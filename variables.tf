@@ -11,3 +11,17 @@ variable "subnet_cidr" {
   description = "CIDR block for the subnet."
   default = "10.0.0.0/24"
 }
+
+variable "vm_shape" {
+  description = "OCI Compute VM shape. Flex is the new default and it's pretty nice :-). Beware of your quotas, credits and limits if you plan to change it."
+  default = "VM.Standard2.2"
+}
+
+variable "compute_name" {
+  description = "display name for the compute instance"
+  default = "demo-vm"
+}
+
+variable "ssh_public_key" {
+  description = "public ssh key to connect to the compute instance"
+}
