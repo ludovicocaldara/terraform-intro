@@ -1,10 +1,14 @@
-# A gentle introduction to Terraform in OCI
+# lab2: create your first resource: the VCN
+1. [Description](#description)
+2. [New in this lab](#new)
+3. [Run the lab](#run)
+4. [Checkout the next lab](#next)
 
-## lab2: create a VCN
+## Description <a name="description"></a>
 We have seen how to query a data source, now let's create our first resource: the Virtual Cloud Network (VCN).
+This is done by using the resource `oci_core_vcn`: https://registry.terraform.io/providers/hashicorp/oci/latest/docs/resources/core_vcn
 
-
-### New in this lab:
+## New in this lab <a name="new"></a>
 The file `network.tf` contains a new resource for the VCN:
 ```
 # -----------------------------------------------
@@ -26,7 +30,8 @@ variable "vcn_cidr" {
 }
 ```
 
-### Plan and apply the stack
+## Run the lab <a name="run"></a>
+Plan and apply the stack
 ```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform plan
 
@@ -107,9 +112,9 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 
 You can confirm with `terraform show` or with the console that the VCN has been created.
 
-
-
-### To continue, switch to the lab3 branch:
+## Checkout the next lab <a name="next"></a>
+```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab3
 Branch lab3 set up to track remote branch lab3 from origin.
 Switched to a new branch 'lab3'
+```
