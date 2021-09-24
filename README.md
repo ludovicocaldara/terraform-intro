@@ -44,16 +44,18 @@ remote: Total 27 (delta 7), reused 25 (delta 5), pack-reused 0
 Unpacking objects: 100% (27/27), done.
 ```
 
-Print the list of labs:
+Print the list of remote branches, each one correspond to a lab:
 ```
-ludovico_c@cloudshell:tmp (uk-london-1)$ git branch --list  
-  lab0
-  lab1
-  lab2
-  lab3
-  lab4
-  lab5
-* main
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git branch -r
+  origin/HEAD -> origin/main
+  origin/lab0
+  origin/lab1
+  origin/lab2
+  origin/lab3
+  origin/lab4
+  origin/lab5
+  origin/lab6
+  origin/main
 ```
 
 Checkout the first lab's branch, `lab0` and read its README, you can switch to that branch also within the github.com website, it will be easier to read. :-)
