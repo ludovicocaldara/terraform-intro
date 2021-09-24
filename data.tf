@@ -1,5 +1,5 @@
 data "oci_identity_compartment" "my_compartment" {
-  id = var.compartment_id
+    id = var.compartment_id
 }
 
 data "oci_identity_availability_domains" "availability_domains" {
@@ -13,8 +13,4 @@ data "oci_core_images" "vm_images" {
   sort_by                    = "TIMECREATED"
   sort_order                 = "DESC"
   shape                      = var.vm_shape
-}
-
-data "oci_core_image_shapes" "test_image_shapes" {
-  image_id = data.oci_core_images.vm_images.images[0].id
 }

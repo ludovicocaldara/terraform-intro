@@ -11,7 +11,7 @@ resource "oci_core_instance" "demo_vm" {
   }
 
   create_vnic_details {
-    assign_public_ip        = false
+    assign_public_ip        = true
     subnet_id               = oci_core_subnet.demo-public-subnet.id
     display_name            = "${var.compute_name}-vnic"
     hostname_label          = var.compute_name
