@@ -1,9 +1,13 @@
-# A gentle introduction to Terraform in OCI
+# lab4: create an Autonomous Database
+1. [Description](#description)
+2. [New in this lab](#new)
+3. [Run the lab](#run)
+4. [Checkout the next lab](#next)
 
-## lab4: create an Autonomous Database
+## Description <a name="description"></a>
+In this lab we'll create an __Autonomous Database__ with a random password and we'll connect to it through __Database Actions__.
 
-### New in this lab:
-
+## New in this lab <a name="new"></a>
 The file `database.tf` contains a resource to create a new random password, and then the resource declaration for the Autonomous Database.
 
 Please note that `is_free_tier` could be set at `true` if you still have Always Free Autonomous Database resources available.
@@ -32,9 +36,8 @@ resource "oci_database_autonomous_database" "demo_adb" {
 
 ```
 
-### Run the updated stack
-
-The `terraform` validate will fail this time because we are using a new resource plugin (random).
+## Run the lab <a name="run"></a>
+The `terraform` validate will fail this time because we are using a new resource provider (random).
 ```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform validate
 ╷
@@ -321,15 +324,13 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 The password has been created with the `random_password` resource. It is masked by default when printed.
 To get the actual password, you can use the `nonsensitive` function in `terraform console`:
 ```
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform console
-> nonsensitive(random_password.adb_password.result)
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ echo "nonsensitive(random_password.adb_password.result)" | terraform console
 "3o1LIggOoU7y%KQVhm1%"
 ```
 
 Similarly, you can get the connection URLs for the Autonomous Database:
 ```
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform console
-> oci_database_autonomous_database.demo_adb.connection_urls
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ echo "oci_database_autonomous_database.demo_adb.connection_urls" | terraform console
 tolist([
   {
     "apex_url" = "https://DN2THOBKLNJOUFS-DEMOADB.adb.uk-london-1.oraclecloudapps.com/ords/apex"
@@ -340,9 +341,11 @@ tolist([
 ])
 ```
 
-You can connect using for instance the `sql_dev_web_url`, user `admin` and the password discovered earlier to access the new database.
+To validate the creation of the Autonomous Database, you can connect using the `sql_dev_web_url`, user `admin` and the password discovered earlier to access the new database.
 
-### To continue, switch to the lab5 branch:
+## Checkout the next lab <a name="next"></a>
+```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab5
 Branch lab5 set up to track remote branch lab5 from origin.
 Switched to a new branch 'lab5'
+```
