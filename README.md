@@ -1,10 +1,9 @@
-# A gentle introduction to Terraform in OCI
+# lab0: setup the empty OCI provider
 
-## lab0: setup the empty OCI provider
+## Description  <a name="description"></a>
 This lab is just to show you how to run a basic `terraform` command.
 
-
-### New in this Lab
+## New in this Lab <a name="new"></a>
 The file `provider.tf` contains a basic provider entry:
 ```
 # -------------------------
@@ -15,7 +14,7 @@ provider "oci" {
 ```
 
 
-## Run the full terraform cycle: init, validate, plan, apply
+## Run the full terraform cycle: init, validate, plan, apply  <a name="run"></a>
 
 `terraform init` will download the required plugins:
 ```
@@ -73,4 +72,9 @@ Terraform has compared your real infrastructure against your configuration and f
 Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
 ```
 
+## Checkout the next lab <a name="next"></a>
 
+```
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab1
+Switched to branch 'lab1'
+```
