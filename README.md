@@ -1,4 +1,8 @@
 # lab0: setup the empty OCI provider
+1. [Description](#description)
+2. [New in this lab](#new)
+3. [Run the lab](#run)
+4. [Checkout the next lab](#next)
 
 ## Description  <a name="description"></a>
 This lab is just to show you how to run a basic `terraform` command.
