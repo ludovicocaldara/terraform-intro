@@ -1,16 +1,17 @@
-# A gentle introduction to Terraform in OCI
+# lab1: set the compartment_id and collect some data
+1. [Description](#description)
+2. [New in this lab](#new)
+3. [Run the lab](#run)
+4. [Checkout the next lab](#next)
 
-## lab1: set the compartment_id and collect some data
+## Description  <a name="description"></a>
 This lab introduce variables and data structures.
 
 Terraform is meant to create resources in the Cloud, but it can also inspect the existing resources.
 In this lab, we will use a data source (`data`) to get information about the compartment we want to work with.
 
 
-### Switch to the lab1 branch:
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab1
-
-### New in this lab:
+## New in this lab <a name="new"></a>
 The file `data.tf` contains a basic data source to gather information about the compartment:
 ```
 data "oci_identity_compartment" "my_compartment" {
@@ -27,6 +28,7 @@ variable "compartment_id" {
 }
 ```
 
+## Run the lab <a name="run"></a>
 ### Try to execute terraform validate and plan
 ```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform validate
@@ -94,4 +96,15 @@ data "oci_identity_compartment" "my_compartment" {
     time_created   = "2021-09-14 10:09:05.245 +0000 UTC"
 }
 ```
-The status of the resources and data sources is stored in the file `terraform.tfstate`.
+You can also run expression in `terraform console`. The best way in my opinion is to echo the expression and pipe it into the `terraform console` command.
+```
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ echo data.oci_identity_compartment.my_compartment.description | terraform console
+"Terraform demo for SPOUG"
+```
+The status of the resources and data sources is stored in the file `terraform.tfstate`. For demo purposes it is OK to have the terraform state locally, but when working in production environment or within a team, it is best to store the terraform state in a shared location, for example a bucket in the object store.
+
+## Checkout the next lab <a name="next"></a>
+```
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab2
+Switched to branch 'lab2'
+```
