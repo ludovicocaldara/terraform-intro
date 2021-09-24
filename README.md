@@ -1,9 +1,13 @@
-# A gentle introduction to Terraform in OCI
+# lab3: create the additional network components
+1. [Description](#description)
+2. [New in this lab](#new)
+3. [Run the lab](#run)
+4. [Checkout the next lab](#next)
 
-## lab3: create the additional network components
+## Description <a name="description"></a>
 Now that we have created our first resource, we can complete the network setup with subnet, internet gateway, routing table, security group, security list.
 
-### New in this lab:
+## New in this lab <a name="new"></a>
 The file `network.tf` contains a new resources:
 ```
 # -----------------------------------------------
@@ -127,153 +131,8 @@ variable "subnet_cidr" {
 }
 ```
 
-### Plan and apply the stack
-```
-ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform plan
-oci_core_vcn.demovcn: Refreshing state... [id=ocid1.vcn.oc1.uk-london-1.amaaaaaaknuwtjiai6fi24b6daedzutlzfbyyw3w2dwhgzfun2imxxinsyka]
-
-Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
-  + create
-
-Terraform will perform the following actions:
-
-  # oci_core_internet_gateway.demo-internet-gateway will be created
-  + resource "oci_core_internet_gateway" "demo-internet-gateway" {
-      + compartment_id = "ocid1.compartment.oc1..aaaaaaaa7d5txgtjrxbasote6czdn6vwpt2gn5tqhkbpyytqdmorr2jed6pa"
-      + defined_tags   = (known after apply)
-      + display_name   = "demo-igw"
-      + enabled        = true
-      + freeform_tags  = (known after apply)
-      + id             = (known after apply)
-      + state          = (known after apply)
-      + time_created   = (known after apply)
-      + vcn_id         = "ocid1.vcn.oc1.uk-london-1.amaaaaaaknuwtjiai6fi24b6daedzutlzfbyyw3w2dwhgzfun2imxxinsyka"
-    }
-
-  # oci_core_network_security_group.demo-network-security-group will be created
-  + resource "oci_core_network_security_group" "demo-network-security-group" {
-      + compartment_id = "ocid1.compartment.oc1..aaaaaaaa7d5txgtjrxbasote6czdn6vwpt2gn5tqhkbpyytqdmorr2jed6pa"
-      + defined_tags   = (known after apply)
-      + display_name   = "demo-nsg"
-      + freeform_tags  = (known after apply)
-      + id             = (known after apply)
-      + state          = (known after apply)
-      + time_created   = (known after apply)
-      + vcn_id         = "ocid1.vcn.oc1.uk-london-1.amaaaaaaknuwtjiai6fi24b6daedzutlzfbyyw3w2dwhgzfun2imxxinsyka"
-    }
-
-  # oci_core_route_table.demo-public-rt will be created
-  + resource "oci_core_route_table" "demo-public-rt" {
-      + compartment_id = "ocid1.compartment.oc1..aaaaaaaa7d5txgtjrxbasote6czdn6vwpt2gn5tqhkbpyytqdmorr2jed6pa"
-      + defined_tags   = (known after apply)
-      + display_name   = "demo-routetable"
-      + freeform_tags  = (known after apply)
-      + id             = (known after apply)
-      + state          = (known after apply)
-      + time_created   = (known after apply)
-      + vcn_id         = "ocid1.vcn.oc1.uk-london-1.amaaaaaaknuwtjiai6fi24b6daedzutlzfbyyw3w2dwhgzfun2imxxinsyka"
-
-      + route_rules {
-          + cidr_block        = (known after apply)
-          + description       = (known after apply)
-          + destination       = "0.0.0.0/0"
-          + destination_type  = "CIDR_BLOCK"
-          + network_entity_id = (known after apply)
-        }
-    }
-
-  # oci_core_security_list.demo-security-list will be created
-  + resource "oci_core_security_list" "demo-security-list" {
-      + compartment_id = "ocid1.compartment.oc1..aaaaaaaa7d5txgtjrxbasote6czdn6vwpt2gn5tqhkbpyytqdmorr2jed6pa"
-      + defined_tags   = (known after apply)
-      + display_name   = "demo-seclist"
-      + freeform_tags  = (known after apply)
-      + id             = (known after apply)
-      + state          = (known after apply)
-      + time_created   = (known after apply)
-      + vcn_id         = "ocid1.vcn.oc1.uk-london-1.amaaaaaaknuwtjiai6fi24b6daedzutlzfbyyw3w2dwhgzfun2imxxinsyka"
-
-      + egress_security_rules {
-          + description      = (known after apply)
-          + destination      = "0.0.0.0/0"
-          + destination_type = (known after apply)
-          + protocol         = "all"
-          + stateless        = (known after apply)
-        }
-
-      + ingress_security_rules {
-          + description = (known after apply)
-          + protocol    = "1"
-          + source      = "0.0.0.0/0"
-          + source_type = (known after apply)
-          + stateless   = false
-        }
-      + ingress_security_rules {
-          + description = (known after apply)
-          + protocol    = "1"
-          + source      = "10.0.0.0/24"
-          + source_type = (known after apply)
-          + stateless   = false
-        }
-      + ingress_security_rules {
-          + description = (known after apply)
-          + protocol    = "6"
-          + source      = "0.0.0.0/0"
-          + source_type = (known after apply)
-          + stateless   = false
-
-          + tcp_options {
-              + max = 22
-              + min = 22
-            }
-        }
-      + ingress_security_rules {
-          + description = (known after apply)
-          + protocol    = "6"
-          + source      = "10.0.0.0/16"
-          + source_type = (known after apply)
-          + stateless   = false
-
-          + tcp_options {
-              + max = 1531
-              + min = 1521
-            }
-        }
-    }
-
-  # oci_core_subnet.demo-public-subnet will be created
-  + resource "oci_core_subnet" "demo-public-subnet" {
-      + availability_domain        = (known after apply)
-      + cidr_block                 = "10.0.0.0/24"
-      + compartment_id             = "ocid1.compartment.oc1..aaaaaaaa7d5txgtjrxbasote6czdn6vwpt2gn5tqhkbpyytqdmorr2jed6pa"
-      + defined_tags               = (known after apply)
-      + dhcp_options_id            = (known after apply)
-      + display_name               = "demo-pubsubnet"
-      + dns_label                  = "pub"
-      + freeform_tags              = (known after apply)
-      + id                         = (known after apply)
-      + ipv6cidr_block             = (known after apply)
-      + ipv6virtual_router_ip      = (known after apply)
-      + prohibit_internet_ingress  = (known after apply)
-      + prohibit_public_ip_on_vnic = (known after apply)
-      + route_table_id             = (known after apply)
-      + security_list_ids          = (known after apply)
-      + state                      = (known after apply)
-      + subnet_domain_name         = (known after apply)
-      + time_created               = (known after apply)
-      + vcn_id                     = "ocid1.vcn.oc1.uk-london-1.amaaaaaaknuwtjiai6fi24b6daedzutlzfbyyw3w2dwhgzfun2imxxinsyka"
-      + virtual_router_ip          = (known after apply)
-      + virtual_router_mac         = (known after apply)
-    }
-
-Plan: 5 to add, 0 to change, 0 to destroy.
-
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-
-Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you run "terraform apply" now.
-```
-
-And the apply:
+## Run the lab <a name="run"></a>
+Apply the stack (run `plan` as well, not in this example):
 ```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ terraform apply
 oci_core_vcn.demovcn: Refreshing state... [id=ocid1.vcn.oc1.uk-london-1.amaaaaaaknuwtjiai6fi24b6daedzutlzfbyyw3w2dwhgzfun2imxxinsyka]
@@ -433,9 +292,11 @@ oci_core_subnet.demo-public-subnet: Creation complete after 3s [id=ocid1.subnet.
 
 Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
 ```
+All the network components have been created.
 
-
-### To continue, switch to the lab4 branch:
+## Checkout the next lab <a name="next"></a>
+```
 ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab4
 Branch lab4 set up to track remote branch lab4 from origin.
 Switched to a new branch 'lab4'
+```
