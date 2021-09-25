@@ -72,4 +72,14 @@ adb-pwd = "Get your Autonomous Database password with: echo \"nonsensitive(rando
 demo_vm = "Your demo VM is ready with public IP address 140.238.91.214"
 ```
 
+You can try to destroy and reapply the whole stack. You will see it will take ~2 minutes to destroy and ~2 minutes to create everything we've done so far.
+
+`terraform destroy`
+...
+`terraform apply`
+
+(omitting the output here, it's quite long).
+
+Nice, huh?
+
 ## Checkout the next lab <a name="next"></a>
