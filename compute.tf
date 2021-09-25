@@ -1,3 +1,8 @@
+resource "tls_private_key" "provisioner_keypair" {
+  algorithm   = "RSA"
+  rsa_bits = "4096"
+}
+
 resource "oci_core_instance" "demo_vm" {
   availability_domain = data.oci_identity_availability_domains.availability_domains.availability_domains[0].name
   compartment_id      = var.compartment_id
@@ -18,7 +23,7 @@ resource "oci_core_instance" "demo_vm" {
   }
 
   metadata = {
-    ssh_authorized_keys = "${var.ssh_public_key}"
+    ssh_authorized_keys = "${tls_private_key.provisioner_keypair.public_key_openssh}"
   }
 
 }
@@ -33,7 +38,7 @@ resource "null_resource" "nginx_setup" {
       agent       = false
       timeout     = "5m"
       user        = "opc"
-      private_key = file(var.ssh_private_key_file)
+      private_key = tls_private_key.provisioner_keypair.private_key_pem
     }
     inline = [ "sudo dnf install -y oracle-instantclient-release-el8 nginx" ]
   }

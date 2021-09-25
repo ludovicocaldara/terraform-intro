@@ -1,5 +1,8 @@
+variable "compartment_ocid" {}
+
 variable "compartment_id" {
   description = "The OCID of the compartment you want to work with."
+  default = var.compartment_ocid
 }
 
 variable "vcn_cidr" {
@@ -20,14 +23,6 @@ variable "vm_shape" {
 variable "compute_name" {
   description = "display name for the compute instance"
   default = "demo-vm"
-}
-
-variable "ssh_public_key" {
-  description = "public ssh key to connect to the compute instance"
-}
-
-variable "ssh_private_key_file" {
-  description = "public ssh key to connect to the compute instance"
 }
 
 variable "boot_volume_size_in_gbs" {
