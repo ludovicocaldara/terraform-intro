@@ -22,3 +22,20 @@ resource "oci_core_instance" "demo_vm" {
   }
 
 }
+
+
+resource "null_resource" "nginx_setup" {
+  depends_on = [oci_core_instance.demo_vm]
+  provisioner "remote-exec" {
+    connection  {
+      type        = "ssh"
+      host        = oci_core_instance.demo_vm.public_ip
+      agent       = false
+      timeout     = "5m"
+      user        = "opc"
+      private_key = file(var.ssh_private_key_file)
+    }
+    inline = [ "sudo dnf install -y oracle-instantclient-release-el8 nginx" ]
+  }
+}
+

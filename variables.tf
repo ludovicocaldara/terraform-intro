@@ -26,6 +26,10 @@ variable "ssh_public_key" {
   description = "public ssh key to connect to the compute instance"
 }
 
+variable "ssh_private_key_file" {
+  description = "public ssh key to connect to the compute instance"
+}
+
 variable "boot_volume_size_in_gbs" {
   description = "Size in GB for compute instance boot volume"
   default = 128
