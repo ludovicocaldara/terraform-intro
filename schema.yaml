@@ -18,9 +18,13 @@ variableGroups:
   - title: Tenancy Configuration
     visible: false
     variables:
-    - compartment_id
     - tenancy_ocid
     - region
+
+  - title: Compartment Configuration
+    visible: true
+    variables:
+    - compartment_id
 
 variables:
   compartment_id:
