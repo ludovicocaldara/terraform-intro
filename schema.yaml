@@ -18,12 +18,12 @@ variableGroups:
   - title: Tenancy Configuration
     visible: false
     variables:
-    - compartment_ocid
+    - compartment_id
     - tenancy_ocid
     - region
 
 variables:
-  compartment_ocid:
+  compartment_id:
     type: oci:identity:compartment:id
     required: true
     title: Compartment
