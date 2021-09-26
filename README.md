@@ -2,7 +2,6 @@
 1. [Description](#description)
 2. [New in this lab](#new)
 3. [Run the lab](#run)
-4. [Checkout the next lab](#next)
 
 ## Description <a name="description"></a>
 Now we have seen how to create and customize the resources, but getting the relevant information when the stack is applied is not handy.
@@ -81,5 +80,3 @@ You can try to destroy and reapply the whole stack. You will see it will take ~2
 (omitting the output here, it's quite long).
 
 Nice, huh?
-
-## Checkout the next lab <a name="next"></a>
