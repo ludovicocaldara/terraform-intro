@@ -5,7 +5,7 @@ resource "tls_private_key" "provisioner_keypair" {
 
 resource "oci_core_instance" "demo_vm" {
   availability_domain = data.oci_identity_availability_domains.availability_domains.availability_domains[0].name
-  compartment_id      = var.compartment_id
+  compartment_id      = var.compartment_ocid
   shape               = var.vm_shape
   display_name        = var.compute_name
 

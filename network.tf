@@ -4,7 +4,7 @@
 resource "oci_core_vcn" "demovcn" {
   display_name   = "demo-vcn"
 
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   cidr_block     = var.vcn_cidr
   dns_label      = "demovcn"
 }
@@ -15,7 +15,7 @@ resource "oci_core_vcn" "demovcn" {
 resource "oci_core_internet_gateway" "demo-internet-gateway" {
   display_name   = "demo-igw"
 
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.demovcn.id
   enabled        = "true"
 }
@@ -26,7 +26,7 @@ resource "oci_core_internet_gateway" "demo-internet-gateway" {
 resource "oci_core_route_table" "demo-public-rt" {
   display_name   = "demo-routetable"
 
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.demovcn.id
 
   route_rules {
@@ -43,7 +43,7 @@ resource "oci_core_route_table" "demo-public-rt" {
 resource "oci_core_security_list" "demo-security-list" {
   display_name   = "demo-seclist"
 
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.demovcn.id
 
   # -------------------------------------------
@@ -99,7 +99,7 @@ resource "oci_core_security_list" "demo-security-list" {
 resource "oci_core_network_security_group" "demo-network-security-group" {
   display_name   = "demo-nsg"
 
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.demovcn.id
 }
 
@@ -110,7 +110,7 @@ resource "oci_core_subnet" "demo-public-subnet" {
   display_name      = "demo-pubsubnet"
   dns_label         = "pub"
 
-  compartment_id    = var.compartment_id
+  compartment_id    = var.compartment_ocid
   vcn_id            = oci_core_vcn.demovcn.id
   cidr_block        = var.subnet_cidr
   route_table_id    = oci_core_route_table.demo-public-rt.id

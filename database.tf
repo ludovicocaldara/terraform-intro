@@ -13,7 +13,7 @@ resource "random_password" "adb_password" {
 }
 
 resource "oci_database_autonomous_database" "demo_adb" {
-    compartment_id           = var.compartment_id
+    compartment_id           = var.compartment_ocid
     db_name                  = "demoadb"
     is_free_tier             = false
     cpu_core_count           = 1
