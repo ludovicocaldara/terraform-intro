@@ -7,5 +7,5 @@ output "adb" {
 }
 
 output "adb-pwd" {
-  value = format("Get your Autonomous Database password with: echo 'nonsensitive(random_password.adb_password.result' | terraform console")
+  value = format("Get your Autonomous Database password with: echo 'nonsensitive(random_password.adb_password.result)' | terraform console")
 }
