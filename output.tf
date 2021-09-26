@@ -5,7 +5,3 @@ output "demo_vm" {
 output "adb" {
   value = format("Your Autonomous Database is ready with sql_web address: %s", oci_database_autonomous_database.demo_adb.connection_urls[0].sql_dev_web_url)
 }
-
-output "adb-pwd" {
-  value = format("Get your Autonomous Database password with: echo 'nonsensitive(random_password.adb_password.result' | terraform console")
-}
