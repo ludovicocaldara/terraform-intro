@@ -2,6 +2,7 @@
 1. [Description](#description)
 2. [New in this lab](#new)
 3. [Run the lab](#run)
+4. [Checkout the next lab](#next)
 
 ## Description <a name="description"></a>
 Now we have seen how to create and customize the resources, but getting the relevant information when the stack is applied is not handy.
@@ -71,12 +72,15 @@ adb-pwd = "Get your Autonomous Database password with: echo \"nonsensitive(rando
 demo_vm = "Your demo VM is ready with public IP address 140.238.91.214"
 ```
 
-You can try to destroy and reapply the whole stack. You will see it will take ~2 minutes to destroy and ~2 minutes to create everything we've done so far.
+You can now destroy whole stack. You will see it will take ~2 minutes to destroy everything in the correct order.
 
 `terraform destroy`
-...
-`terraform apply`
 
 (omitting the output here, it's quite long).
 
-Nice, huh?
+## Checkout the next lab <a name="next"></a>
+```
+ludovico_c@cloudshell:terraform-intro (uk-london-1)$ git checkout lab8
+Branch lab8 set up to track remote branch lab8 from origin.
+Switched to a new branch 'lab8'
+```
